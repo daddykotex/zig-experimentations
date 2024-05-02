@@ -24,7 +24,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    const zig_cli = b.dependency("zig_cli", .{
+    const zig_cli = b.dependency("zig-cli", .{
         .target = target,
         .optimize = optimize,
     });
