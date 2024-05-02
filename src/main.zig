@@ -1,9 +1,6 @@
 const std = @import("std");
 const cli = @import("zig-cli");
 
-var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-const allocator = gpa.allocator();
-
 var config = struct {
     api_key: []const u8 = undefined,
 }{};
@@ -15,22 +12,32 @@ var api_key = cli.Option{
     .value_ref = cli.mkRef(&config.api_key),
 };
 
-var app = &cli.App{
-    .command = cli.Command{
-        .name = "record_matches",
-        .options = &.{
-            &api_key,
-        },
-        .target = cli.CommandTarget{
-            .action = cli.CommandAction{ .exec = record_matches },
-        },
-    },
-};
-
 pub fn main() !void {
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+
+    defer std.debug.assert(gpa.deinit() == .ok);
+    const allocator = gpa.allocator();
+
+    const exec_record_matches: cli.ExecFn = struct {
+        fn exec() !void {
+            run_record_matches(allocator);
+        }
+    }.exec;
+    var app = &cli.App{
+        .command = cli.Command{
+            .name = "record_matches",
+            .options = &.{
+                &api_key,
+            },
+            .target = cli.CommandTarget{
+                .action = cli.CommandAction{ .exec = exec_record_matches },
+            },
+        },
+    };
+
     return cli.run(app, allocator);
 }
 
-fn record_matches() !void {
-    std.log.debug("server is listening on {s}", .{config.api_key});
+fn run_record_matches(alloc: std.mem.Allocator) !void {
+    std.log.debug("alloc {}", .{alloc});
 }
