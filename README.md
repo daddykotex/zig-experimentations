@@ -1,6 +1,6 @@
-# zig Vim Motions <!-- omit in toc -->
+# zig experimentations <!-- omit in toc -->
 
-Web application to experiment with vim motions written in zig.
+1. small cli tool to download apex legends stats
 
 # development
 
